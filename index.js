@@ -18,6 +18,7 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
   const foodsCollection = client.db(process.env.DB_NAME).collection("foods");
+  const orderCollection = client.db(process.env.DB_NAME).collection("orders");
   if (err) {
     console.log('Database not connected');
     console.log(err);
@@ -46,6 +47,16 @@ client.connect(err => {
       foodsCollection.find({ _id: ObjectId(foodId) })
         .toArray((err, documents) => {
           res.send(documents[0])
+        })
+    })
+
+    app.post('/submitOrder', (req, res) => {
+      const newOrder = req.body;
+      console.log(newOrder);
+      orderCollection.insertOne(newOrder)
+        .then(result => {
+          console.log(result.insertedCount);
+          res.send(result.insertedCount > 0);
         })
     })
 
