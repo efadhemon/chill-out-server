@@ -60,6 +60,14 @@ client.connect(err => {
         })
     })
 
+    app.get('/order/:paymentId', (req, res) => {
+      const paymentId = req.params.paymentId;
+      orderCollection.find({ paymentId: paymentId })
+        .toArray((err, documents) => {
+          res.send(documents[0])
+        })
+    })
+
   }
 });
 
